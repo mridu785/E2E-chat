@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- viewport-fit=cover and interactive-widget=resizes-content fixes Android/iOS keyboard trimming -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>PulseChat - Real-Time Messenger</title>
   
@@ -33,7 +32,6 @@
       --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       --radius-sm: 6px;
       --radius-md: 10px;
-      --radius-lg: 18px;
       --radius-round: 50%;
       --composer-bg: #f0f2f5;
       --modal-overlay: rgba(11, 20, 26, 0.65);
@@ -69,7 +67,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Fixed 100dvh lock prevents mobile & webview bottom trimming */
     html, body {
       width: 100%;
       height: 100%;
@@ -121,9 +118,7 @@
     }
 
     @media (min-width: 1200px) {
-      body {
-        padding: 20px 0;
-      }
+      body { padding: 20px 0; }
       #app-container {
         max-width: 1600px;
         height: calc(100dvh - 40px);
@@ -132,7 +127,6 @@
       }
     }
 
-    /* Sidebar Layout */
     #sidebar {
       width: 420px;
       flex-shrink: 0;
@@ -152,9 +146,7 @@
         inset: 0;
         transition: transform 0.22s ease-out;
       }
-      #sidebar.hidden-mobile {
-        transform: translateX(-100%);
-      }
+      #sidebar.hidden-mobile { transform: translateX(-100%); }
     }
 
     .panel-header {
@@ -177,6 +169,10 @@
       min-width: 0;
       flex: 1;
       padding-right: 8px;
+    }
+
+    .user-profile-summary:hover .user-header-name {
+      color: var(--primary);
     }
 
     .avatar {
@@ -205,12 +201,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .user-header-handle {
       font-size: 12px;
       color: var(--primary);
-      font-weight: 500;
+      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -218,7 +217,7 @@
 
     .header-actions {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       align-items: center;
     }
 
@@ -240,7 +239,6 @@
       color: var(--text-primary);
     }
 
-    /* Search Bar */
     .search-container {
       padding: 8px 12px;
       background: var(--bg-sidebar);
@@ -267,7 +265,6 @@
       font-size: 14px;
     }
 
-    /* Conversation List */
     #conversation-list {
       flex: 1;
       min-height: 0;
@@ -288,10 +285,7 @@
     .chat-item:hover { background-color: var(--bg-hover); }
     .chat-item.active { background-color: var(--bg-active-chat); }
 
-    .avatar-wrapper {
-      position: relative;
-      flex-shrink: 0;
-    }
+    .avatar-wrapper { position: relative; flex-shrink: 0; }
 
     .online-badge {
       width: 12px;
@@ -307,10 +301,7 @@
 
     .online-badge.visible { display: block; }
 
-    .chat-details {
-      flex: 1;
-      min-width: 0;
-    }
+    .chat-details { flex: 1; min-width: 0; }
 
     .chat-row-top {
       display: flex;
@@ -361,7 +352,6 @@
       text-align: center;
     }
 
-    /* Main Chat Viewport */
     #main-chat-viewport {
       flex: 1;
       display: flex;
@@ -422,14 +412,8 @@
       z-index: 10;
     }
 
-    .back-btn-mobile {
-      display: none;
-      margin-right: 6px;
-    }
-
-    @media (max-width: 768px) {
-      .back-btn-mobile { display: inline-flex; }
-    }
+    .back-btn-mobile { display: none; margin-right: 6px; }
+    @media (max-width: 768px) { .back-btn-mobile { display: inline-flex; } }
 
     .header-chat-info {
       flex: 1;
@@ -455,7 +439,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Message Stream */
     #message-stream {
       flex: 1;
       min-height: 0;
@@ -492,9 +475,7 @@
       flex-direction: column;
     }
 
-    @media (max-width: 600px) {
-      .message-bubble { max-width: 86%; }
-    }
+    @media (max-width: 600px) { .message-bubble { max-width: 86%; } }
 
     .message-bubble.out {
       align-self: flex-end;
@@ -549,16 +530,8 @@
       padding-left: 12px;
     }
 
-    .timestamp-label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .status-tick {
-      width: 14px;
-      height: 14px;
-    }
-
+    .timestamp-label { font-size: 11px; color: var(--text-muted); }
+    .status-tick { width: 14px; height: 14px; }
     .status-tick.read { color: var(--tick-read); }
     .status-tick.delivered, .status-tick.sent { color: var(--tick-sent); }
 
@@ -569,9 +542,7 @@
       right: 4px;
     }
 
-    .message-bubble:hover .message-actions-menu {
-      display: block;
-    }
+    .message-bubble:hover .message-actions-menu { display: block; }
 
     #reply-context-bar {
       display: none;
@@ -584,7 +555,6 @@
       flex-shrink: 0;
     }
 
-    /* FIXED MESSAGE COMPOSER - Prevents bottom-trim clipping */
     #composer-container {
       background: var(--composer-bg);
       padding: 8px 12px;
@@ -612,11 +582,8 @@
       line-height: 20px;
     }
 
-    .composer-input-area:focus {
-      border-color: var(--border-subtle);
-    }
+    .composer-input-area:focus { border-color: var(--border-subtle); }
 
-    /* Modals & Dialogs */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -633,7 +600,7 @@
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-md);
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -662,14 +629,12 @@
       flex: 1;
     }
 
-    .form-group {
-      margin-bottom: 14px;
-    }
+    .form-group { margin-bottom: 14px; }
 
     .form-group label {
       display: block;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-secondary);
       margin-bottom: 6px;
     }
@@ -685,9 +650,7 @@
       outline: none;
     }
 
-    .form-control:focus {
-      border-color: var(--primary);
-    }
+    .form-control:focus { border-color: var(--primary); }
 
     .btn {
       padding: 10px 16px;
@@ -720,9 +683,9 @@
 
     .user-badge-copy-pill {
       background: var(--bg-chat-header);
-      border: 1px dashed var(--primary);
+      border: 1.5px dashed var(--primary);
       border-radius: 8px;
-      padding: 10px 14px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -782,7 +745,6 @@
       display: none;
     }
     .alert-error { background: var(--danger-bg); color: var(--danger); }
-    .alert-success { background: #e8f5e9; color: #2e7d32; }
 
     #toast-container {
       position: fixed;
@@ -823,14 +785,20 @@
     <!-- SIDEBAR -->
     <aside id="sidebar">
       <header class="panel-header">
-        <div class="user-profile-summary" id="open-my-profile-btn" title="Edit Profile & Username">
+        <div class="user-profile-summary" id="sidebar-user-card" onclick="openProfileModal()" title="Click to Edit Profile & Username">
           <img id="current-user-avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='8' r='4'/><path d='M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z'/></svg>" alt="My Profile" />
           <div class="user-meta-header">
-            <span class="user-header-name" id="user-header-name">Loading...</span>
-            <span class="user-header-handle" id="user-header-handle">@username</span>
+            <span class="user-header-name" id="user-header-name">
+              <span>Loading...</span>
+              <svg class="icon" style="width:13px;height:13px;color:var(--text-muted);" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            </span>
+            <span class="user-header-handle" id="user-header-handle">@...</span>
           </div>
         </div>
         <div class="header-actions">
+          <button class="icon-btn" onclick="openProfileModal()" title="Edit Profile & Username" style="color:var(--primary);">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M18.5 7.5L20 9l-5 5h-1.5v-1.5l5-5z"/></svg>
+          </button>
           <button class="icon-btn" id="btn-create-group" title="New Group">
             <svg class="icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
           </button>
@@ -858,7 +826,7 @@
       <section id="chat-empty-state">
         <svg style="width: 80px; height: 80px; fill: var(--text-muted); opacity: 0.3;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         <h2>PulseChat Web</h2>
-        <p>Real-time messaging platform. Tap the "Find Users" icon above or share your unique username handle with friends to start chatting.</p>
+        <p>Real-time messaging platform. Tap below to find registered users or click your profile on the top-left to customize your unique username.</p>
         <button class="btn btn-primary" onclick="document.getElementById('btn-discover-users').click()" style="margin-top: 16px;">
           Find & Discover Users
         </button>
@@ -944,7 +912,7 @@
         </div>
         <div class="form-group">
           <label for="reg-username">Choose a Unique @Username</label>
-          <input type="text" id="reg-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="e.g. alex99 (letters, numbers, _)" required />
+          <input type="text" id="reg-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="e.g. alex99" required />
         </div>
         <div class="form-group">
           <label for="reg-email">Email</label>
@@ -963,19 +931,18 @@
     </div>
   </div>
 
-  <!-- COMPLETE PROFILE & USERNAME SETTINGS MODAL -->
+  <!-- COMPLETE PROFILE & USERNAME EDITING MODAL -->
   <div class="modal-backdrop" id="modal-profile">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Profile & Identity</h3>
+        <h3>Edit Profile & Identity</h3>
         <button class="icon-btn" onclick="closeModal('modal-profile')" style="color: #fff;"><svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
       </div>
       <div class="modal-body">
-        <!-- Quick Copy Handle Badge -->
         <div class="user-badge-copy-pill">
           <div>
             <div style="font-size:11px; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Your Shareable Handle</div>
-            <strong id="badge-my-username" style="font-size:16px; color:var(--primary);">@loading</strong>
+            <strong id="badge-my-username" style="font-size:16px; color:var(--primary);">@...</strong>
           </div>
           <button class="btn btn-secondary" onclick="copyMyUsernameHandle()" style="padding: 6px 12px; font-size:12px;">Copy Handle</button>
         </div>
@@ -986,13 +953,13 @@
         
         <div class="form-group">
           <label for="profile-username">Unique Username (@handle)</label>
-          <input type="text" id="profile-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="username" />
-          <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">Other users discover and message you using this handle.</span>
+          <input type="text" id="profile-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="e.g. johndoe" required />
+          <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">Letters, numbers, and underscores only. Other users find you using this handle.</span>
         </div>
 
         <div class="form-group">
           <label for="profile-display-name">Display Name</label>
-          <input type="text" id="profile-display-name" class="form-control" required maxlength="40" />
+          <input type="text" id="profile-display-name" class="form-control" required maxlength="40" placeholder="Your Name" />
         </div>
 
         <div class="form-group">
@@ -1007,13 +974,13 @@
         </div>
 
         <div class="form-group">
-          <label>Email (Account ID)</label>
+          <label>Email (Signed-in Account)</label>
           <input type="text" id="profile-email-readonly" class="form-control" disabled />
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('modal-profile')">Cancel</button>
-        <button class="btn btn-primary" onclick="saveUserProfile()">Save Profile</button>
+        <button class="btn btn-primary" id="btn-save-profile" onclick="saveUserProfile()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -1029,17 +996,17 @@
         <div class="user-badge-copy-pill" style="margin-bottom:12px;">
           <div>
             <div style="font-size:11px; color:var(--text-secondary);">YOUR HANDLE</div>
-            <strong id="discovery-my-username" style="color:var(--primary); font-size:14px;">@username</strong>
+            <strong id="discovery-my-username" style="color:var(--primary); font-size:14px;">@...</strong>
           </div>
           <button class="btn btn-secondary" onclick="copyMyUsernameHandle()" style="padding: 4px 8px; font-size:12px;">Copy</button>
         </div>
 
         <div class="form-group">
-          <label for="user-discovery-query">Search by Username or Display Name</label>
-          <input type="text" id="user-discovery-query" class="form-control" placeholder="Type to filter users..." oninput="filterUserSearchResults(this.value)" />
+          <label for="user-discovery-query">Search by Name or @Username</label>
+          <input type="text" id="user-discovery-query" class="form-control" placeholder="Type name or handle..." oninput="filterUserSearchResults(this.value)" />
         </div>
 
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">REGISTERED MEMBERS:</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">AVAILABLE CONTACTS:</div>
         <div id="user-search-results" style="max-height: 240px; overflow-y: auto;">
           <div style="padding:16px; text-align:center; color:var(--text-muted);">Loading members...</div>
         </div>
@@ -1084,7 +1051,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label for="group-create-name">Group Subject</label>
-          <input type="text" id="group-create-name" class="form-control" maxlength="50" required placeholder="Team Chat" />
+          <input type="text" id="group-create-name" class="form-control" maxlength="50" required placeholder="Group Name" />
         </div>
         <div class="form-group">
           <label for="group-create-desc">Description</label>
@@ -1114,6 +1081,15 @@
         <button class="icon-btn" onclick="closeModal('modal-app-settings')" style="color:#fff;"><svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
       </div>
       <div class="modal-body">
+        <!-- Direct Edit Profile Option in Settings -->
+        <div class="form-group">
+          <label>Profile & Identity</label>
+          <button type="button" class="btn btn-primary" onclick="closeModal('modal-app-settings'); openProfileModal();" style="width: 100%;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            Edit Profile Name & Username
+          </button>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 16px 0;" />
         <div class="form-group">
           <label for="setting-theme-select">Theme Preference</label>
           <select id="setting-theme-select" class="form-control" onchange="changeThemePreference(this.value)">
@@ -1136,7 +1112,7 @@
 
   <div id="toast-container"></div>
 
-  <!-- APPLICATION JAVASCRIPT ENGINE -->
+  <!-- APPLICATION ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { 
@@ -1165,8 +1141,7 @@
       limit, 
       onSnapshot, 
       addDoc, 
-      serverTimestamp, 
-      runTransaction 
+      serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { 
       getDatabase, 
@@ -1188,7 +1163,6 @@
   appId: "1:304547617852:web:e10d36a52400a38216b739",
   measurementId: "G-BFRN89J42X"
 };
-
 
     let app, auth, db, rtdb;
     let currentUser = null;
@@ -1218,7 +1192,7 @@
       console.error("Initialization error:", e);
     }
 
-    /* VIEWPORT VIRTUAL KEYBOARD RESIZE FIX */
+    /* KEYBOARD RESIZING FOR MOBILE & WEBVIEW */
     function adjustViewportForKeyboard() {
       if (window.visualViewport) {
         document.body.style.height = `${window.visualViewport.height}px`;
@@ -1229,7 +1203,7 @@
       window.visualViewport.addEventListener('scroll', adjustViewportForKeyboard);
     }
 
-    /* UTILITY HELPERS */
+    /* TOAST & MODAL HELPERS */
     window.showToast = function(msg) {
       const c = document.getElementById("toast-container");
       const t = document.createElement("div");
@@ -1250,8 +1224,7 @@
     };
 
     window.copyMyUsernameHandle = function() {
-      if (!currentUserProfile?.username) return;
-      const handle = `@${currentUserProfile.username}`;
+      const handle = currentUserProfile?.username ? `@${currentUserProfile.username}` : document.getElementById('user-header-handle').textContent;
       navigator.clipboard.writeText(handle).then(() => {
         showToast(`Copied ${handle} to clipboard! Share it with friends.`);
       }).catch(() => {
@@ -1303,34 +1276,8 @@
     window.handleGoogleSignIn = async function() {
       try {
         const provider = new GoogleAuthProvider();
-        const res = await signInWithPopup(auth, provider);
-        const user = res.user;
-        const userRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userRef);
-
-        if (!snap.exists()) {
-          const cleanEmailPrefix = (user.email.split('@')[0] || "user").replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
-          const uniqueSuffix = Math.floor(100 + Math.random() * 900);
-          const generatedUsername = `${cleanEmailPrefix.substring(0, 15)}_${uniqueSuffix}`;
-
-          await setDoc(userRef, {
-            uid: user.uid,
-            displayName: user.displayName || cleanEmailPrefix,
-            username: generatedUsername,
-            email: user.email,
-            photoURL: user.photoURL || "",
-            bio: "Hey there! I am using PulseChat.",
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            isActive: true
-          });
-
-          await setDoc(doc(db, "usernames", generatedUsername), {
-            uid: user.uid,
-            username: generatedUsername,
-            createdAt: serverTimestamp()
-          });
-        }
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged handles document creation cleanly without race conditions
       } catch (err) {
         displayAuthError(err.message);
       }
@@ -1360,32 +1307,25 @@
       }
 
       try {
-        const usernameRef = doc(db, "usernames", username);
-        const userCheck = await getDoc(usernameRef);
-        if (userCheck.exists()) {
+        // Check username uniqueness
+        const existingCheck = await getDocs(query(collection(db, "users"), where("username", "==", username), limit(1)));
+        if (!existingCheck.empty) {
           return displayAuthError(`@${username} is already taken. Please choose another.`);
         }
 
         const userCred = await createUserWithEmailAndPassword(auth, email, pass);
         const uid = userCred.user.uid;
 
-        await runTransaction(db, async (tx) => {
-          const freshCheck = await tx.get(usernameRef);
-          if (freshCheck.exists()) {
-            throw new Error(`@${username} was just claimed. Please choose another.`);
-          }
-          tx.set(usernameRef, { uid: uid, username: username, createdAt: serverTimestamp() });
-          tx.set(doc(db, "users", uid), {
-            uid: uid,
-            displayName: displayName,
-            username: username,
-            email: email,
-            photoURL: "",
-            bio: "Hey there! I am using PulseChat.",
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            isActive: true
-          });
+        await setDoc(doc(db, "users", uid), {
+          uid: uid,
+          displayName: displayName,
+          username: username,
+          email: email,
+          photoURL: "",
+          bio: "Hey there! I am using PulseChat.",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          isActive: true
         });
 
         await updateProfile(userCred.user, { displayName });
@@ -1404,12 +1344,13 @@
       await signOut(auth);
     };
 
+    /* AUTH STATE & FOOLPROOF USER INITIALIZATION */
     if (auth) {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           currentUser = user;
           document.getElementById('auth-screen-overlay').style.display = 'none';
-          await loadCurrentUserData();
+          await ensureAndLoadUserData(user);
           setupRealtimePresence();
           listenToConversations();
         } else {
@@ -1422,20 +1363,66 @@
       });
     }
 
-    async function loadCurrentUserData() {
-      const snap = await getDoc(doc(db, "users", currentUser.uid));
-      if (snap.exists()) {
+    /**
+     * Guarantees that every user (especially Google Sign-In) has a valid
+     * Firestore record and unique username on login.
+     */
+    async function ensureAndLoadUserData(user) {
+      const userDocRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userDocRef);
+
+      if (!snap.exists()) {
+        // Derive clean handle from email or UID
+        const cleanBase = (user.email ? user.email.split('@')[0] : 'user')
+          .replace(/[^a-zA-Z0-9_]/g, '_')
+          .substring(0, 14)
+          .toLowerCase();
+        const randNum = Math.floor(100 + Math.random() * 900);
+        const autoUsername = `${cleanBase}_${randNum}`;
+
+        const newProfile = {
+          uid: user.uid,
+          displayName: user.displayName || cleanBase,
+          username: autoUsername,
+          email: user.email || "",
+          photoURL: user.photoURL || "",
+          bio: "Hey there! I am using PulseChat.",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          isActive: true
+        };
+
+        await setDoc(userDocRef, newProfile);
+        currentUserProfile = newProfile;
+      } else {
         currentUserProfile = snap.data();
         
-        // Update header identity
-        document.getElementById('user-header-name').textContent = currentUserProfile.displayName || "My Profile";
-        document.getElementById('user-header-handle').textContent = `@${currentUserProfile.username || 'unknown'}`;
-        document.getElementById('badge-my-username').textContent = `@${currentUserProfile.username || 'unknown'}`;
-        document.getElementById('discovery-my-username').textContent = `@${currentUserProfile.username || 'unknown'}`;
-
-        if (currentUserProfile.photoURL) {
-          document.getElementById('current-user-avatar').src = currentUserProfile.photoURL;
+        // Repair legacy records missing username
+        if (!currentUserProfile.username) {
+          const fallback = `user_${user.uid.substring(0, 6).toLowerCase()}`;
+          currentUserProfile.username = fallback;
+          await updateDoc(userDocRef, { username: fallback });
         }
+      }
+
+      updateUserUIElements();
+    }
+
+    function updateUserUIElements() {
+      if (!currentUserProfile) return;
+      const name = currentUserProfile.displayName || "Pulse User";
+      const handle = `@${currentUserProfile.username || 'user'}`;
+
+      document.getElementById('user-header-name').innerHTML = `
+        <span>${escapeHTML(name)}</span>
+        <svg class="icon" style="width:13px;height:13px;color:var(--text-muted);" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      `;
+      document.getElementById('user-header-handle').textContent = handle;
+      document.getElementById('badge-my-username').textContent = handle;
+      document.getElementById('discovery-my-username').textContent = handle;
+
+      if (currentUserProfile.photoURL) {
+        document.getElementById('current-user-avatar').src = currentUserProfile.photoURL;
       }
     }
 
@@ -1464,17 +1451,26 @@
       }
     }
 
-    /* PROFILE & USERNAME MANAGEMENT */
-    document.getElementById('open-my-profile-btn').addEventListener('click', () => {
-      if (!currentUserProfile) return;
-      document.getElementById('profile-display-name').value = currentUserProfile.displayName || "";
-      document.getElementById('profile-username').value = currentUserProfile.username || "";
-      document.getElementById('profile-bio').value = currentUserProfile.bio || "";
-      document.getElementById('profile-email-readonly').value = currentUser.email || "";
-      document.getElementById('profile-picture-url').value = currentUserProfile.photoURL || "";
-      document.getElementById('profile-edit-avatar-preview').src = currentUserProfile.photoURL || document.getElementById('current-user-avatar').src;
+    /* PROFILE & USERNAME EDITING */
+    window.openProfileModal = function() {
+      // Fallback object so modal always opens even if sync is pending
+      const p = currentUserProfile || {
+        displayName: currentUser?.displayName || "User",
+        username: "user",
+        bio: "Hey there! I am using PulseChat.",
+        email: currentUser?.email || "",
+        photoURL: currentUser?.photoURL || ""
+      };
+
+      document.getElementById('profile-display-name').value = p.displayName || "";
+      document.getElementById('profile-username').value = p.username || "";
+      document.getElementById('profile-bio').value = p.bio || "";
+      document.getElementById('profile-email-readonly').value = p.email || currentUser?.email || "";
+      document.getElementById('profile-picture-url').value = p.photoURL || "";
+      document.getElementById('profile-edit-avatar-preview').src = p.photoURL || document.getElementById('current-user-avatar').src;
+
       openModal('modal-profile');
-    });
+    };
 
     window.testAndPreviewAvatar = function() {
       const url = document.getElementById('profile-picture-url').value.trim();
@@ -1493,6 +1489,7 @@
     };
 
     window.saveUserProfile = async function() {
+      const saveBtn = document.getElementById('btn-save-profile');
       const displayName = document.getElementById('profile-display-name').value.trim();
       const newUsername = document.getElementById('profile-username').value.trim().toLowerCase();
       const bio = document.getElementById('profile-bio').value.trim();
@@ -1506,57 +1503,45 @@
         return alert("Profile photo URL must start with https://");
       }
 
-      const oldUsername = currentUserProfile.username;
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving...";
 
       try {
-        if (newUsername !== oldUsername) {
-          const newUsernameDocRef = doc(db, "usernames", newUsername);
-          const oldUsernameDocRef = doc(db, "usernames", oldUsername);
+        const currentUsername = currentUserProfile?.username || "";
 
-          await runTransaction(db, async (tx) => {
-            const checkDoc = await tx.get(newUsernameDocRef);
-            if (checkDoc.exists()) {
-              throw new Error(`Username @${newUsername} is already taken!`);
-            }
-            tx.set(newUsernameDocRef, { uid: currentUser.uid, username: newUsername, createdAt: serverTimestamp() });
-            if (oldUsername) {
-              tx.delete(oldUsernameDocRef);
-            }
-            tx.update(doc(db, "users", currentUser.uid), {
-              displayName,
-              username: newUsername,
-              bio,
-              photoURL,
-              updatedAt: serverTimestamp()
-            });
-          });
-        } else {
-          await updateDoc(doc(db, "users", currentUser.uid), {
-            displayName,
-            bio,
-            photoURL,
-            updatedAt: serverTimestamp()
-          });
+        // Verify uniqueness if username changed
+        if (newUsername !== currentUsername) {
+          const userCheck = await getDocs(query(collection(db, "users"), where("username", "==", newUsername), limit(1)));
+          if (!userCheck.empty && userCheck.docs[0].id !== currentUser.uid) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+            return alert(`@${newUsername} is already taken! Please choose another.`);
+          }
         }
 
+        // Direct, atomic update on the user's document
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          displayName,
+          username: newUsername,
+          bio,
+          photoURL,
+          updatedAt: serverTimestamp()
+        });
+
+        // Update local state
         currentUserProfile.displayName = displayName;
         currentUserProfile.username = newUsername;
         currentUserProfile.bio = bio;
         currentUserProfile.photoURL = photoURL;
 
-        document.getElementById('user-header-name').textContent = displayName;
-        document.getElementById('user-header-handle').textContent = `@${newUsername}`;
-        document.getElementById('badge-my-username').textContent = `@${newUsername}`;
-        document.getElementById('discovery-my-username').textContent = `@${newUsername}`;
-
-        if (photoURL) {
-          document.getElementById('current-user-avatar').src = photoURL;
-        }
-
+        updateUserUIElements();
         closeModal('modal-profile');
-        showToast("Profile and username updated!");
+        showToast("Profile & username updated successfully!");
       } catch (err) {
-        alert("Failed to save: " + err.message);
+        alert("Failed to save profile: " + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Changes";
       }
     };
 
@@ -1616,7 +1601,7 @@
           <img class="avatar avatar-sm" src="${user.photoURL || 'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%238696a0\'><circle cx=\'12\' cy=\'8\' r=\'4\'/><path d=\'M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z\'/></svg>'}" />
           <div class="chat-details">
             <div class="chat-name">${escapeHTML(user.displayName || 'Pulse User')}</div>
-            <div class="chat-last-message" style="color:var(--primary); font-size:12px;">@${escapeHTML(user.username || 'unknown')}</div>
+            <div class="chat-last-message" style="color:var(--primary); font-size:12px; font-weight:600;">@${escapeHTML(user.username || 'unknown')}</div>
           </div>
           <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Chat</button>
         `;
@@ -1696,7 +1681,6 @@
           const isGroup = chat.type === 'group';
 
           let chatTitle = chat.groupName || "Chat";
-          let chatSubtitle = "";
           let chatImage = chat.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
           let otherUserId = null;
 
@@ -1705,7 +1689,6 @@
             const otherInfo = chat.participantDetails?.[otherUserId];
             if (otherInfo) {
               chatTitle = otherInfo.displayName || "User";
-              chatSubtitle = otherInfo.username ? `@${otherInfo.username}` : '';
               if (otherInfo.photoURL) chatImage = otherInfo.photoURL;
             }
           }
@@ -1747,7 +1730,7 @@
       }, (err) => console.error("Conversations error:", err));
     }
 
-    /* MESSAGING & CONVERSATION VIEW */
+    /* MESSAGING PIPELINE */
     window.openConversation = async function(chatId) {
       activeChatId = chatId;
       document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
@@ -2107,7 +2090,7 @@
       });
     };
 
-    /* UI VIEW HELPERS */
+    /* VIEW CONTROLS */
     document.getElementById('btn-back-to-conversations').addEventListener('click', () => {
       document.getElementById('sidebar').classList.remove('hidden-mobile');
       resetActiveChatView();
