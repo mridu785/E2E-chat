@@ -93,21 +93,6 @@
       flex-shrink: 0;
     }
 
-    #notification-banner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #ea0038;
-      color: #ffffff;
-      padding: 8px 14px;
-      font-size: 13px;
-      text-align: center;
-      z-index: 1000;
-      font-weight: 500;
-      display: none;
-    }
-
     #app-container {
       width: 100%;
       height: 100%;
@@ -127,6 +112,7 @@
       }
     }
 
+    /* SIDEBAR */
     #sidebar {
       width: 420px;
       flex-shrink: 0;
@@ -169,6 +155,10 @@
       min-width: 0;
       flex: 1;
       padding-right: 8px;
+    }
+
+    .user-profile-summary:hover .user-header-name {
+      color: var(--primary);
     }
 
     .avatar {
@@ -235,43 +225,6 @@
       color: var(--text-primary);
     }
 
-    /* Tab Switcher: Chats vs Requests */
-    .sidebar-tabs {
-      display: flex;
-      background: var(--bg-sidebar);
-      border-bottom: 1px solid var(--border-subtle);
-      flex-shrink: 0;
-    }
-
-    .sidebar-tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: transparent;
-      border: none;
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border-bottom: 2px solid transparent;
-    }
-
-    .sidebar-tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-
-    .badge-count {
-      background: var(--primary);
-      color: #fff;
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 10px;
-    }
-
     .search-container {
       padding: 8px 12px;
       background: var(--bg-sidebar);
@@ -298,7 +251,7 @@
       font-size: 14px;
     }
 
-    #conversation-list, #requests-list {
+    #conversation-list {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
@@ -374,6 +327,21 @@
       max-width: 250px;
     }
 
+    .status-pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .status-pill.pending {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
     .unread-counter {
       background-color: var(--primary);
       color: #fff;
@@ -385,6 +353,7 @@
       text-align: center;
     }
 
+    /* MAIN VIEWPORT */
     #main-chat-viewport {
       flex: 1;
       display: flex;
@@ -472,7 +441,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Request Banner inside Active Conversation */
     #request-banner-bar {
       background: #fff3cd;
       border-bottom: 1px solid #ffeeba;
@@ -636,6 +604,7 @@
       color: var(--text-muted);
     }
 
+    /* MODALS */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -830,8 +799,6 @@
 </head>
 <body>
 
-  <div id="notification-banner"></div>
-
   <div id="app-container">
 
     <!-- SIDEBAR -->
@@ -863,28 +830,15 @@
         </div>
       </header>
 
-      <!-- Tab Switcher: Chats vs Requests -->
-      <div class="sidebar-tabs">
-        <button class="sidebar-tab-btn active" id="tab-btn-chats" onclick="switchSidebarTab('chats')">
-          Chats
-        </button>
-        <button class="sidebar-tab-btn" id="tab-btn-requests" onclick="switchSidebarTab('requests')">
-          Requests <span class="badge-count" id="sidebar-request-badge" style="display:none;">0</span>
-        </button>
-      </div>
-
       <div class="search-container">
         <div class="search-input-box">
           <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" id="conversation-search-input" placeholder="Search conversations..." aria-label="Search conversations" />
+          <input type="text" id="conversation-search-input" placeholder="Search or start new chat" oninput="filterSavedConversations(this.value)" aria-label="Search conversations" />
         </div>
       </div>
 
-      <!-- Live Conversations View -->
+      <!-- Live Persistent Conversations List (Like WhatsApp) -->
       <div id="conversation-list"></div>
-
-      <!-- Pending Chat Requests View -->
-      <div id="requests-list" style="display:none;"></div>
     </aside>
 
     <!-- MAIN CHAT VIEWPORT -->
@@ -892,7 +846,7 @@
       <section id="chat-empty-state">
         <svg style="width: 80px; height: 80px; fill: var(--text-muted); opacity: 0.3;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         <h2>PulseChat Web</h2>
-        <p>Send and receive messages in real time with end-to-end cloud sync. Discover registered users to send chat requests.</p>
+        <p>Send and receive messages in real time. Your conversations stay saved here permanently just like WhatsApp.</p>
         <button class="btn btn-primary" onclick="document.getElementById('btn-discover-users').click()" style="margin-top: 16px;">
           Find & Discover Users
         </button>
@@ -913,7 +867,6 @@
           </div>
         </header>
 
-        <!-- Dynamic Request Status Banner -->
         <div id="request-banner-bar">
           <span id="request-banner-text">Chat request pending...</span>
           <div style="display:flex; gap:8px;" id="request-banner-actions">
@@ -1029,7 +982,6 @@
         <div class="form-group">
           <label for="profile-username">Unique Username (@handle)</label>
           <input type="text" id="profile-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="e.g. johndoe" required />
-          <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">Letters, numbers, and underscores only.</span>
         </div>
 
         <div class="form-group">
@@ -1148,7 +1100,7 @@
     </div>
   </div>
 
-  <!-- APPLICATION SETTINGS MODAL -->
+  <!-- SETTINGS MODAL -->
   <div class="modal-backdrop" id="modal-app-settings">
     <div class="modal-card">
       <div class="modal-header">
@@ -1210,8 +1162,6 @@
       getDocs,
       query, 
       where, 
-      orderBy, 
-      limit, 
       onSnapshot, 
       addDoc, 
       serverTimestamp 
@@ -1246,7 +1196,7 @@
     let typingDebounceTimer = null;
     let activeReplyMessage = null;
     let cachedRegisteredUsers = [];
-    let currentSidebarTab = 'chats';
+    let allUserChats = []; // In-memory cached list for instant search & render
 
     try {
       app = initializeApp(firebaseConfig);
@@ -1257,7 +1207,6 @@
       console.error("Initialization error:", e);
     }
 
-    /* KEYBOARD RESIZING */
     function adjustViewportForKeyboard() {
       if (window.visualViewport) {
         document.body.style.height = `${window.visualViewport.height}px`;
@@ -1268,7 +1217,6 @@
       window.visualViewport.addEventListener('scroll', adjustViewportForKeyboard);
     }
 
-    /* TOAST & MODAL HELPERS */
     window.showToast = function(msg) {
       const c = document.getElementById("toast-container");
       const t = document.createElement("div");
@@ -1311,17 +1259,6 @@
     }
     applyTheme(localStorage.getItem("pulse_theme") || "system");
 
-    /* SIDEBAR TAB SWITCHER (CHATS VS REQUESTS) */
-    window.switchSidebarTab = function(tab) {
-      currentSidebarTab = tab;
-      const isChats = tab === 'chats';
-      document.getElementById('tab-btn-chats').classList.toggle('active', isChats);
-      document.getElementById('tab-btn-requests').classList.toggle('active', !isChats);
-      document.getElementById('conversation-list').style.display = isChats ? 'block' : 'none';
-      document.getElementById('requests-list').style.display = isChats ? 'none' : 'block';
-    };
-
-    /* AUTHENTICATION */
     window.switchAuthTab = function(type) {
       const isLogin = type === 'login';
       document.getElementById('tab-login').classList.toggle('active', isLogin);
@@ -1414,7 +1351,6 @@
       await signOut(auth);
     };
 
-    /* AUTH STATE MONITOR */
     if (auth) {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -1428,7 +1364,6 @@
           currentUserProfile = null;
           document.getElementById('auth-screen-overlay').style.display = 'flex';
           document.getElementById('conversation-list').innerHTML = '';
-          document.getElementById('requests-list').innerHTML = '';
           resetActiveChatView();
         }
       });
@@ -1510,9 +1445,7 @@
               set(statusRef, { state: 'online', last_changed: rtdbServerTimestamp() });
             });
         });
-      } catch (e) {
-        console.warn("RTDB presence warning:", e);
-      }
+      } catch (e) {}
     }
 
     function setTypingStatus(chatId, isTyping) {
@@ -1610,7 +1543,7 @@
       }
     };
 
-    /* USER DISCOVERY & CHAT REQUEST CREATION */
+    /* USER DISCOVERY */
     document.getElementById('btn-discover-users').addEventListener('click', async () => {
       openModal('modal-user-search');
       document.getElementById('user-discovery-query').value = '';
@@ -1622,7 +1555,7 @@
       container.innerHTML = '<div style="padding:14px; text-align:center; color:var(--text-muted);">Fetching members...</div>';
 
       try {
-        const usersSnap = await getDocs(query(collection(db, "users"), limit(60)));
+        const usersSnap = await getDocs(query(collection(db, "users")));
         cachedRegisteredUsers = [];
         usersSnap.forEach(d => {
           const u = d.data();
@@ -1668,268 +1601,247 @@
             <div class="chat-name">${escapeHTML(user.displayName || 'Pulse User')}</div>
             <div class="chat-last-message" style="color:var(--primary); font-size:12px; font-weight:600;">@${escapeHTML(user.username || 'unknown')}</div>
           </div>
-          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Chat / Request</button>
+          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Chat</button>
         `;
         item.querySelector('button').addEventListener('click', () => {
           closeModal('modal-user-search');
-          initiateChatOrRequest(user);
+          startOrCreateConversation(user);
         });
         container.appendChild(item);
       });
     }
 
     /**
-     * Solves the chat opening issue and initiates chat requests cleanly
+     * Creates or opens a permanent conversation with the user
      */
-    async function initiateChatOrRequest(targetUser) {
+    async function startOrCreateConversation(targetUser) {
+      if (!currentUser) return alert("Please sign in first.");
+
       const chatId = [currentUser.uid, targetUser.uid].sort().join('_');
       const chatDocRef = doc(db, "chats", chatId);
 
       try {
-        const chatSnap = await getDoc(chatDocRef);
-
-        if (!chatSnap.exists()) {
-          // Create chat with "pending" request status
-          await setDoc(chatDocRef, {
-            chatId: chatId,
-            type: "private",
-            status: "pending", // "pending" | "accepted"
-            requestedBy: currentUser.uid,
-            requestedTo: targetUser.uid,
-            participants: [currentUser.uid, targetUser.uid],
-            participantDetails: {
-              [currentUser.uid]: {
-                displayName: currentUserProfile.displayName || "User",
-                username: currentUserProfile.username || "",
-                photoURL: currentUserProfile.photoURL || ""
-              },
-              [targetUser.uid]: {
-                displayName: targetUser.displayName || targetUser.username,
-                username: targetUser.username || "",
-                photoURL: targetUser.photoURL || ""
-              }
+        await setDoc(chatDocRef, {
+          chatId: chatId,
+          type: "private",
+          status: "accepted", // Immediately active so both users see it in their chats list
+          participants: [currentUser.uid, targetUser.uid],
+          participantDetails: {
+            [currentUser.uid]: {
+              displayName: currentUserProfile?.displayName || "User",
+              username: currentUserProfile?.username || "",
+              photoURL: currentUserProfile?.photoURL || ""
             },
-            lastMessage: "Chat request pending",
-            lastMessageTime: serverTimestamp(),
-            unreadCounts: {
-              [currentUser.uid]: 0,
-              [targetUser.uid]: 1
-            },
-            createdAt: serverTimestamp()
-          }, { merge: true });
+            [targetUser.uid]: {
+              displayName: targetUser.displayName || targetUser.username || "User",
+              username: targetUser.username || "",
+              photoURL: targetUser.photoURL || ""
+            }
+          },
+          lastMessage: "Conversation started",
+          lastMessageTime: serverTimestamp(),
+          unreadCounts: {
+            [currentUser.uid]: 0,
+            [targetUser.uid]: 0
+          },
+          createdAt: serverTimestamp()
+        }, { merge: true });
 
-          showToast(`Chat request sent to @${targetUser.username || 'user'}!`);
-        }
-
-        // Open chat view immediately without glitching back to home
         openConversation(chatId);
       } catch (err) {
-        console.error("Error opening chat:", err);
-        showToast("Error opening conversation: " + err.message);
+        console.error("Error creating chat:", err);
+        showToast("Error: " + err.message);
       }
     }
 
-    /* CONVERSATION & REQUEST REALTIME SYNC */
+    /* REALTIME PERSISTENT CONVERSATION LIST (INDEX-FREE SORTING) */
     function listenToConversations() {
       if (unsubscribeChatListener) unsubscribeChatListener();
 
+      // Query without composite index requirement: simple array-contains filter
       const chatsQuery = query(
         collection(db, "chats"),
-        where("participants", "array-contains", currentUser.uid),
-        orderBy("lastMessageTime", "desc"),
-        limit(50)
+        where("participants", "array-contains", currentUser.uid)
       );
 
       unsubscribeChatListener = onSnapshot(chatsQuery, (snapshot) => {
-        const convListEl = document.getElementById('conversation-list');
-        const reqListEl = document.getElementById('requests-list');
-        const badgeEl = document.getElementById('sidebar-request-badge');
-        
-        convListEl.innerHTML = '';
-        reqListEl.innerHTML = '';
-
-        let pendingCount = 0;
-
-        if (snapshot.empty) {
-          convListEl.innerHTML = `
-            <div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13.5px;">
-              No conversations yet.<br><br>
-              <button class="btn btn-secondary" onclick="document.getElementById('btn-discover-users').click()">
-                Discover Registered Users
-              </button>
-            </div>
-          `;
-          badgeEl.style.display = 'none';
-          return;
-        }
+        allUserChats = [];
 
         snapshot.forEach((docSnap) => {
-          const chat = docSnap.data();
-          const chatId = docSnap.id;
-          const isGroup = chat.type === 'group';
-
-          // Differentiate active chats from pending requests
-          const isPending = chat.status === 'pending';
-          const isRequestedToMe = isPending && chat.requestedTo === currentUser.uid;
-
-          if (isRequestedToMe) {
-            pendingCount++;
-          }
-
-          let chatTitle = chat.groupName || "Chat";
-          let chatImage = chat.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
-          let otherUserId = null;
-
-          if (!isGroup) {
-            otherUserId = chat.participants.find(p => p !== currentUser.uid);
-            const otherInfo = chat.participantDetails?.[otherUserId];
-            if (otherInfo) {
-              chatTitle = otherInfo.displayName || "User";
-              if (otherInfo.photoURL) chatImage = otherInfo.photoURL;
-            }
-          }
-
-          const unread = chat.unreadCounts?.[currentUser.uid] || 0;
-          const dateStr = chat.lastMessageTime?.toDate ? formatMessageDate(chat.lastMessageTime.toDate()) : '';
-
-          if (isPending) {
-            // Render inside Requests Tab
-            const reqItem = document.createElement('div');
-            reqItem.className = 'chat-item';
-            reqItem.innerHTML = `
-              <img class="avatar" src="${chatImage}" />
-              <div class="chat-details">
-                <div class="chat-row-top">
-                  <span class="chat-name">${escapeHTML(chatTitle)}</span>
-                  <span class="chat-time">${dateStr}</span>
-                </div>
-                <div class="chat-row-bottom">
-                  <span class="chat-last-message" style="color:var(--primary);">
-                    ${isRequestedToMe ? 'Sent you a chat request' : 'Request sent (waiting acceptance)'}
-                  </span>
-                </div>
-              </div>
-              ${isRequestedToMe ? `
-                <div style="display:flex; gap:6px;">
-                  <button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); acceptChatRequest('${chatId}')">Accept</button>
-                  <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); declineChatRequest('${chatId}')">Decline</button>
-                </div>
-              ` : ''}
-            `;
-            reqItem.addEventListener('click', () => openConversation(chatId));
-            reqListEl.appendChild(reqItem);
-          } else {
-            // Render inside Active Chats Tab
-            const item = document.createElement('div');
-            item.className = `chat-item ${activeChatId === chatId ? 'active' : ''}`;
-            item.id = `chat-item-${chatId}`;
-            item.innerHTML = `
-              <div class="avatar-wrapper">
-                <img class="avatar" src="${chatImage}" />
-                ${!isGroup && otherUserId ? `<div class="online-badge" id="online-badge-${otherUserId}"></div>` : ''}
-              </div>
-              <div class="chat-details">
-                <div class="chat-row-top">
-                  <span class="chat-name">${escapeHTML(chatTitle)}</span>
-                  <span class="chat-time">${dateStr}</span>
-                </div>
-                <div class="chat-row-bottom">
-                  <span class="chat-last-message">${escapeHTML(chat.lastMessage || '')}</span>
-                  ${unread > 0 ? `<span class="unread-counter">${unread}</span>` : ''}
-                </div>
-              </div>
-            `;
-            item.addEventListener('click', () => openConversation(chatId));
-            convListEl.appendChild(item);
-
-            if (!isGroup && otherUserId && rtdb) {
-              try {
-                onValue(ref(rtdb, `/status/${otherUserId}`), (statusSnap) => {
-                  const val = statusSnap.val();
-                  const badge = document.getElementById(`online-badge-${otherUserId}`);
-                  if (badge) badge.classList.toggle('visible', val?.state === 'online');
-                });
-              } catch (e) {}
-            }
-          }
+          allUserChats.push({ id: docSnap.id, ...docSnap.data() });
         });
 
-        // Update badge counter
-        if (pendingCount > 0) {
-          badgeEl.textContent = pendingCount;
-          badgeEl.style.display = 'inline-block';
-        } else {
-          badgeEl.style.display = 'none';
-          if (reqListEl.children.length === 0) {
-            reqListEl.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted); font-size:13px;">No pending chat requests.</div>';
-          }
-        }
-      }, (err) => console.error("Conversations listener:", err));
+        // Client-side sort by newest message (eliminates Firebase composite index requirement)
+        allUserChats.sort((a, b) => {
+          const timeA = a.lastMessageTime?.toMillis ? a.lastMessageTime.toMillis() : (a.lastMessageTime?.seconds ? a.lastMessageTime.seconds * 1000 : 0);
+          const timeB = b.lastMessageTime?.toMillis ? b.lastMessageTime.toMillis() : (b.lastMessageTime?.seconds ? b.lastMessageTime.seconds * 1000 : 0);
+          return timeB - timeA;
+        });
+
+        renderSavedConversationList(allUserChats);
+      }, (err) => {
+        console.error("Conversations listener error:", err);
+      });
     }
 
-    /* CHAT OPENING & REQUEST GATEWAY */
+    function renderSavedConversationList(chats) {
+      const convListEl = document.getElementById('conversation-list');
+      convListEl.innerHTML = '';
+
+      if (chats.length === 0) {
+        convListEl.innerHTML = `
+          <div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13.5px;">
+            No conversations saved yet.<br><br>
+            <button class="btn btn-secondary" onclick="document.getElementById('btn-discover-users').click()">
+              Start a Conversation
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      chats.forEach((chat) => {
+        const chatId = chat.id;
+        const isGroup = chat.type === 'group';
+
+        let chatTitle = chat.groupName || "Chat";
+        let chatImage = chat.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
+        let otherUserId = null;
+
+        if (!isGroup) {
+          otherUserId = chat.participants.find(p => p !== currentUser.uid);
+          const otherInfo = chat.participantDetails?.[otherUserId];
+          if (otherInfo) {
+            chatTitle = otherInfo.displayName || "User";
+            if (otherInfo.photoURL) chatImage = otherInfo.photoURL;
+          }
+        }
+
+        const unread = chat.unreadCounts?.[currentUser.uid] || 0;
+        const dateStr = chat.lastMessageTime?.toDate ? formatMessageDate(chat.lastMessageTime.toDate()) : '';
+
+        const item = document.createElement('div');
+        item.className = `chat-item ${activeChatId === chatId ? 'active' : ''}`;
+        item.id = `chat-item-${chatId}`;
+        item.innerHTML = `
+          <div class="avatar-wrapper">
+            <img class="avatar" src="${chatImage}" />
+            ${!isGroup && otherUserId ? `<div class="online-badge" id="online-badge-${otherUserId}"></div>` : ''}
+          </div>
+          <div class="chat-details">
+            <div class="chat-row-top">
+              <span class="chat-name">${escapeHTML(chatTitle)}</span>
+              <span class="chat-time">${dateStr}</span>
+            </div>
+            <div class="chat-row-bottom">
+              <span class="chat-last-message">${escapeHTML(chat.lastMessage || '')}</span>
+              ${chat.status === 'pending' ? '<span class="status-pill pending">Pending</span>' : ''}
+              ${unread > 0 ? `<span class="unread-counter">${unread}</span>` : ''}
+            </div>
+          </div>
+        `;
+
+        item.addEventListener('click', () => openConversation(chatId));
+        convListEl.appendChild(item);
+
+        if (!isGroup && otherUserId && rtdb) {
+          try {
+            onValue(ref(rtdb, `/status/${otherUserId}`), (statusSnap) => {
+              const val = statusSnap.val();
+              const badge = document.getElementById(`online-badge-${otherUserId}`);
+              if (badge) badge.classList.toggle('visible', val?.state === 'online');
+            });
+          } catch (e) {}
+        }
+      });
+    }
+
+    window.filterSavedConversations = function(queryStr) {
+      const q = queryStr.trim().toLowerCase();
+      if (!q) {
+        renderSavedConversationList(allUserChats);
+        return;
+      }
+      const filtered = allUserChats.filter(chat => {
+        let name = chat.groupName || "";
+        if (chat.type !== 'group' && chat.participants) {
+          const otherId = chat.participants.find(p => p !== currentUser.uid);
+          name = chat.participantDetails?.[otherId]?.displayName || chat.participantDetails?.[otherId]?.username || "";
+        }
+        const lastMsg = chat.lastMessage || "";
+        return name.toLowerCase().includes(q) || lastMsg.toLowerCase().includes(q);
+      });
+      renderSavedConversationList(filtered);
+    };
+
+    /* OPEN CHAT VIEW */
     window.openConversation = async function(chatId) {
+      if (!chatId) return;
       activeChatId = chatId;
+
       document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
       const activeEl = document.getElementById(`chat-item-${chatId}`);
       if (activeEl) activeEl.classList.add('active');
 
-      // Transition mobile view seamlessly
       document.getElementById('sidebar').classList.add('hidden-mobile');
       document.getElementById('chat-empty-state').style.display = 'none';
       const container = document.getElementById('active-chat-container');
       container.style.display = 'flex';
 
-      const chatDoc = await getDoc(doc(db, "chats", chatId));
-      if (!chatDoc.exists()) return;
-      activeChatMeta = chatDoc.data();
+      try {
+        const chatDoc = await getDoc(doc(db, "chats", chatId));
+        if (!chatDoc.exists()) return;
+        activeChatMeta = chatDoc.data();
 
-      let title = activeChatMeta.groupName;
-      let avatar = activeChatMeta.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
-      let subtitle = "offline";
+        let title = activeChatMeta.groupName;
+        let avatar = activeChatMeta.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
+        let subtitle = "offline";
 
-      if (activeChatMeta.type === 'private') {
-        const otherId = activeChatMeta.participants.find(p => p !== currentUser.uid);
-        const otherInfo = activeChatMeta.participantDetails?.[otherId];
-        title = otherInfo?.displayName || "Private Chat";
-        const userHandle = otherInfo?.username ? ` (@${otherInfo.username})` : "";
-        title += userHandle;
-        if (otherInfo?.photoURL) avatar = otherInfo.photoURL;
+        if (activeChatMeta.type === 'private') {
+          const otherId = activeChatMeta.participants.find(p => p !== currentUser.uid);
+          const otherInfo = activeChatMeta.participantDetails?.[otherId];
+          title = otherInfo?.displayName || "Private Chat";
+          const userHandle = otherInfo?.username ? ` (@${otherInfo.username})` : "";
+          title += userHandle;
+          if (otherInfo?.photoURL) avatar = otherInfo.photoURL;
 
-        if (rtdb) {
-          try {
-            onValue(ref(rtdb, `/status/${otherId}`), (s) => {
-              const val = s.val();
-              const subEl = document.getElementById('active-chat-subtitle');
-              const badgeEl = document.getElementById('active-chat-online-badge');
-              if (val?.state === 'online') {
-                subEl.textContent = "online";
-                badgeEl.classList.add('visible');
-              } else {
-                subEl.textContent = val?.last_changed ? `last seen ${formatMessageDate(new Date(val.last_changed))}` : 'offline';
-                badgeEl.classList.remove('visible');
-              }
-            });
-          } catch (e) {}
+          if (rtdb) {
+            try {
+              onValue(ref(rtdb, `/status/${otherId}`), (s) => {
+                const val = s.val();
+                const subEl = document.getElementById('active-chat-subtitle');
+                const badgeEl = document.getElementById('active-chat-online-badge');
+                if (val?.state === 'online') {
+                  subEl.textContent = "online";
+                  badgeEl.classList.add('visible');
+                } else {
+                  subEl.textContent = val?.last_changed ? `last seen ${formatMessageDate(new Date(val.last_changed))}` : 'offline';
+                  badgeEl.classList.remove('visible');
+                }
+              });
+            } catch (e) {}
+          }
+        } else {
+          subtitle = `${activeChatMeta.participants.length} members`;
+          document.getElementById('active-chat-online-badge').classList.remove('visible');
         }
-      } else {
-        subtitle = `${activeChatMeta.participants.length} members`;
-        document.getElementById('active-chat-online-badge').classList.remove('visible');
+
+        document.getElementById('active-chat-title').textContent = title;
+        document.getElementById('active-chat-subtitle').textContent = subtitle;
+        document.getElementById('active-chat-avatar').src = avatar;
+
+        handleChatRequestGate();
+
+        // Mark as read
+        await setDoc(doc(db, "chats", chatId), {
+          unreadCounts: { [currentUser.uid]: 0 }
+        }, { merge: true });
+
+        listenToMessages(chatId);
+        listenToTyping(chatId);
+      } catch (err) {
+        console.error("openConversation error:", err);
       }
-
-      document.getElementById('active-chat-title').textContent = title;
-      document.getElementById('active-chat-subtitle').textContent = subtitle;
-      document.getElementById('active-chat-avatar').src = avatar;
-
-      // Handle Request State Bar & Message Composer Gate
-      handleChatRequestGate();
-
-      await setDoc(doc(db, "chats", chatId), {
-        unreadCounts: { [currentUser.uid]: 0 }
-      }, { merge: true });
-
-      listenToMessages(chatId);
-      listenToTyping(chatId);
     };
 
     function handleChatRequestGate() {
@@ -1943,14 +1855,12 @@
         banner.style.display = 'flex';
 
         if (activeChatMeta.requestedTo === currentUser.uid) {
-          // Current user is recipient
           bannerText.textContent = "This user sent you a chat request. Accept to reply.";
           bannerActions.style.display = 'flex';
           inputEl.contentEditable = "false";
           inputEl.setAttribute("placeholder", "Accept chat request to reply...");
           sendBtn.disabled = true;
         } else {
-          // Current user is sender
           bannerText.textContent = "Chat request sent. Waiting for recipient to accept.";
           bannerActions.style.display = 'none';
           inputEl.contentEditable = "false";
@@ -1958,7 +1868,6 @@
           sendBtn.disabled = true;
         }
       } else {
-        // Chat is accepted
         banner.style.display = 'none';
         inputEl.contentEditable = "true";
         inputEl.setAttribute("placeholder", "Type a message");
@@ -1989,11 +1898,11 @@
 
     window.declineChatRequest = async function(chatId) {
       const targetId = chatId || activeChatId;
-      if (!targetId || !confirm("Are you sure you want to decline this chat request?")) return;
+      if (!targetId || !confirm("Are you sure you want to decline this chat?")) return;
 
       try {
         await deleteDoc(doc(db, "chats", targetId));
-        showToast("Request declined.");
+        showToast("Conversation removed.");
         if (activeChatId === targetId) {
           resetActiveChatView();
         }
@@ -2005,6 +1914,7 @@
     window.acceptCurrentChatRequest = () => acceptChatRequest(activeChatId);
     window.declineCurrentChatRequest = () => declineChatRequest(activeChatId);
 
+    /* REALTIME MESSAGES STREAM */
     function listenToMessages(chatId) {
       if (unsubscribeMessagesListener) unsubscribeMessagesListener();
 
@@ -2123,11 +2033,14 @@
       }
 
       try {
+        // 1. Add message to subcollection
         await addDoc(collection(db, "chats", activeChatId, "messages"), payload);
 
+        // 2. Update parent chat record so it permanently stays at the top of the conversation list
         const updatePayload = {
           lastMessage: text,
-          lastMessageTime: serverTimestamp()
+          lastMessageTime: serverTimestamp(),
+          status: "accepted" // Automatically keeps active chat accepted
         };
 
         activeChatMeta.participants.forEach(uid => {
@@ -2194,13 +2107,13 @@
     };
     document.getElementById('btn-cancel-reply').addEventListener('click', cancelReply);
 
-    /* GROUP CHAT */
+    /* GROUP CHATS */
     document.getElementById('btn-create-group').addEventListener('click', async () => {
       const picker = document.getElementById('group-members-picker');
       picker.innerHTML = 'Loading contacts...';
       openModal('modal-create-group');
 
-      const usersSnap = await getDocs(query(collection(db, "users"), limit(30)));
+      const usersSnap = await getDocs(query(collection(db, "users")));
       picker.innerHTML = '';
       usersSnap.forEach(d => {
         const u = d.data();
@@ -2269,7 +2182,7 @@
       }
     };
 
-    /* IN-CHAT MEDIA (HTTPS URL ONLY) */
+    /* IN-CHAT IMAGES VIA URL */
     document.getElementById('btn-open-image-sender').addEventListener('click', () => {
       if (activeChatMeta?.status === 'pending') {
         return alert("Please accept the chat request first.");
@@ -2308,11 +2221,12 @@
       await addDoc(collection(db, "chats", activeChatId, "messages"), payload);
       await setDoc(doc(db, "chats", activeChatId), {
         lastMessage: caption ? `📷 ${caption}` : "📷 Shared an image",
-        lastMessageTime: serverTimestamp()
+        lastMessageTime: serverTimestamp(),
+        status: "accepted"
       }, { merge: true });
     };
 
-    /* VIEW CONTROLS */
+    /* VIEW MANAGEMENT */
     document.getElementById('btn-back-to-conversations').addEventListener('click', () => {
       document.getElementById('sidebar').classList.remove('hidden-mobile');
       resetActiveChatView();
