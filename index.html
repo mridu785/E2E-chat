@@ -98,9 +98,9 @@
       top: 0;
       left: 0;
       right: 0;
-      background: #fedc56;
-      color: #332701;
-      padding: 6px 12px;
+      background: #ea0038;
+      color: #ffffff;
+      padding: 8px 14px;
       font-size: 13px;
       text-align: center;
       z-index: 1000;
@@ -171,10 +171,6 @@
       padding-right: 8px;
     }
 
-    .user-profile-summary:hover .user-header-name {
-      color: var(--primary);
-    }
-
     .avatar {
       width: 42px;
       height: 42px;
@@ -239,6 +235,43 @@
       color: var(--text-primary);
     }
 
+    /* Tab Switcher: Chats vs Requests */
+    .sidebar-tabs {
+      display: flex;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .sidebar-tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .sidebar-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .badge-count {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
     .search-container {
       padding: 8px 12px;
       background: var(--bg-sidebar);
@@ -265,7 +298,7 @@
       font-size: 14px;
     }
 
-    #conversation-list {
+    #conversation-list, #requests-list {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
@@ -439,6 +472,20 @@
       text-overflow: ellipsis;
     }
 
+    /* Request Banner inside Active Conversation */
+    #request-banner-bar {
+      background: #fff3cd;
+      border-bottom: 1px solid #ffeeba;
+      color: #856404;
+      padding: 10px 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
     #message-stream {
       flex: 1;
       min-height: 0;
@@ -583,6 +630,11 @@
     }
 
     .composer-input-area:focus { border-color: var(--border-subtle); }
+    .composer-input-area[contenteditable="false"] {
+      background: var(--border-subtle);
+      cursor: not-allowed;
+      color: var(--text-muted);
+    }
 
     .modal-backdrop {
       display: none;
@@ -653,11 +705,11 @@
     .form-control:focus { border-color: var(--primary); }
 
     .btn {
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: var(--radius-sm);
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
@@ -785,7 +837,7 @@
     <!-- SIDEBAR -->
     <aside id="sidebar">
       <header class="panel-header">
-        <div class="user-profile-summary" id="sidebar-user-card" onclick="openProfileModal()" title="Click to Edit Profile & Username">
+        <div class="user-profile-summary" id="sidebar-user-card" onclick="openProfileModal()" title="Edit Profile & Username">
           <img id="current-user-avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='8' r='4'/><path d='M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z'/></svg>" alt="My Profile" />
           <div class="user-meta-header">
             <span class="user-header-name" id="user-header-name">
@@ -796,7 +848,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="icon-btn" onclick="openProfileModal()" title="Edit Profile & Username" style="color:var(--primary);">
+          <button class="icon-btn" onclick="openProfileModal()" title="Edit Profile" style="color:var(--primary);">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M18.5 7.5L20 9l-5 5h-1.5v-1.5l5-5z"/></svg>
           </button>
           <button class="icon-btn" id="btn-create-group" title="New Group">
@@ -811,6 +863,16 @@
         </div>
       </header>
 
+      <!-- Tab Switcher: Chats vs Requests -->
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab-btn active" id="tab-btn-chats" onclick="switchSidebarTab('chats')">
+          Chats
+        </button>
+        <button class="sidebar-tab-btn" id="tab-btn-requests" onclick="switchSidebarTab('requests')">
+          Requests <span class="badge-count" id="sidebar-request-badge" style="display:none;">0</span>
+        </button>
+      </div>
+
       <div class="search-container">
         <div class="search-input-box">
           <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -818,7 +880,11 @@
         </div>
       </div>
 
+      <!-- Live Conversations View -->
       <div id="conversation-list"></div>
+
+      <!-- Pending Chat Requests View -->
+      <div id="requests-list" style="display:none;"></div>
     </aside>
 
     <!-- MAIN CHAT VIEWPORT -->
@@ -826,7 +892,7 @@
       <section id="chat-empty-state">
         <svg style="width: 80px; height: 80px; fill: var(--text-muted); opacity: 0.3;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         <h2>PulseChat Web</h2>
-        <p>Real-time messaging platform. Tap below to find registered users or click your profile on the top-left to customize your unique username.</p>
+        <p>Send and receive messages in real time with end-to-end cloud sync. Discover registered users to send chat requests.</p>
         <button class="btn btn-primary" onclick="document.getElementById('btn-discover-users').click()" style="margin-top: 16px;">
           Find & Discover Users
         </button>
@@ -846,6 +912,15 @@
             <div id="active-chat-subtitle" class="header-chat-subtitle">offline</div>
           </div>
         </header>
+
+        <!-- Dynamic Request Status Banner -->
+        <div id="request-banner-bar">
+          <span id="request-banner-text">Chat request pending...</span>
+          <div style="display:flex; gap:8px;" id="request-banner-actions">
+            <button class="btn btn-primary" id="btn-banner-accept" onclick="acceptCurrentChatRequest()">Accept</button>
+            <button class="btn btn-danger" id="btn-banner-decline" onclick="declineCurrentChatRequest()">Decline</button>
+          </div>
+        </div>
 
         <div id="message-stream"></div>
 
@@ -907,7 +982,7 @@
 
       <form id="form-register" style="display: none;" onsubmit="handleAccountRegistration(event)">
         <div class="form-group">
-          <label for="reg-display-name">Display Name (e.g. John Doe)</label>
+          <label for="reg-display-name">Display Name</label>
           <input type="text" id="reg-display-name" class="form-control" maxlength="40" required />
         </div>
         <div class="form-group">
@@ -931,7 +1006,7 @@
     </div>
   </div>
 
-  <!-- COMPLETE PROFILE & USERNAME EDITING MODAL -->
+  <!-- PROFILE EDITING MODAL -->
   <div class="modal-backdrop" id="modal-profile">
     <div class="modal-card">
       <div class="modal-header">
@@ -954,7 +1029,7 @@
         <div class="form-group">
           <label for="profile-username">Unique Username (@handle)</label>
           <input type="text" id="profile-username" class="form-control" pattern="^[a-zA-Z0-9_]{3,20}$" placeholder="e.g. johndoe" required />
-          <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">Letters, numbers, and underscores only. Other users find you using this handle.</span>
+          <span style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display:block;">Letters, numbers, and underscores only.</span>
         </div>
 
         <div class="form-group">
@@ -969,7 +1044,7 @@
 
         <div class="form-group">
           <label for="profile-picture-url">Profile Picture HTTPS URL</label>
-          <input type="url" id="profile-picture-url" class="form-control" placeholder="https://images.unsplash.com/..." />
+          <input type="url" id="profile-picture-url" class="form-control" placeholder="https://..." />
           <button type="button" class="btn btn-secondary" onclick="testAndPreviewAvatar()" style="margin-top: 6px; width: 100%;">Preview Image URL</button>
         </div>
 
@@ -985,7 +1060,7 @@
     </div>
   </div>
 
-  <!-- USER DISCOVERY & SEARCH MODAL -->
+  <!-- DISCOVERY SEARCH MODAL -->
   <div class="modal-backdrop" id="modal-user-search">
     <div class="modal-card">
       <div class="modal-header">
@@ -1006,7 +1081,7 @@
           <input type="text" id="user-discovery-query" class="form-control" placeholder="Type name or handle..." oninput="filterUserSearchResults(this.value)" />
         </div>
 
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">AVAILABLE CONTACTS:</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">AVAILABLE MEMBERS:</div>
         <div id="user-search-results" style="max-height: 240px; overflow-y: auto;">
           <div style="padding:16px; text-align:center; color:var(--text-muted);">Loading members...</div>
         </div>
@@ -1014,7 +1089,7 @@
     </div>
   </div>
 
-  <!-- SHARE IMAGE VIA URL MODAL -->
+  <!-- ATTACHMENT MODAL -->
   <div class="modal-backdrop" id="modal-send-image">
     <div class="modal-card">
       <div class="modal-header">
@@ -1041,7 +1116,7 @@
     </div>
   </div>
 
-  <!-- CREATE GROUP MODAL -->
+  <!-- GROUP CREATION MODAL -->
   <div class="modal-backdrop" id="modal-create-group">
     <div class="modal-card">
       <div class="modal-header">
@@ -1081,7 +1156,6 @@
         <button class="icon-btn" onclick="closeModal('modal-app-settings')" style="color:#fff;"><svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
       </div>
       <div class="modal-body">
-        <!-- Direct Edit Profile Option in Settings -->
         <div class="form-group">
           <label>Profile & Identity</label>
           <button type="button" class="btn btn-primary" onclick="closeModal('modal-app-settings'); openProfileModal();" style="width: 100%;">
@@ -1131,7 +1205,6 @@
       doc, 
       getDoc, 
       setDoc, 
-      updateDoc, 
       deleteDoc,
       collection, 
       getDocs,
@@ -1152,17 +1225,16 @@
       serverTimestamp as rtdbServerTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    /* FIREBASE CONFIGURATION */
-    
+    /* EXACT FIREBASE CONFIGURATION */
     const firebaseConfig = {
-  apiKey: "AIzaSyD_IXDDEvlWErXlsFBT7IUU_L5acVbpJio",
-  authDomain: "last-chatting-app.firebaseapp.com",
-  projectId: "last-chatting-app",
-  storageBucket: "last-chatting-app.firebasestorage.app",
-  messagingSenderId: "304547617852",
-  appId: "1:304547617852:web:e10d36a52400a38216b739",
-  measurementId: "G-BFRN89J42X"
-};
+      apiKey: "AIzaSyD_IXDDEvlWErXlsFBT7IUU_L5acVbpJio",
+      authDomain: "last-chatting-app.firebaseapp.com",
+      projectId: "last-chatting-app",
+      storageBucket: "last-chatting-app.firebasestorage.app",
+      messagingSenderId: "304547617852",
+      appId: "1:304547617852:web:e10d36a52400a38216b739",
+      measurementId: "G-BFRN89J42X"
+    };
 
     let app, auth, db, rtdb;
     let currentUser = null;
@@ -1174,14 +1246,7 @@
     let typingDebounceTimer = null;
     let activeReplyMessage = null;
     let cachedRegisteredUsers = [];
-
-    const isPlaceholderConfig = !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_API_KEY");
-
-    if (isPlaceholderConfig) {
-      const banner = document.getElementById("notification-banner");
-      banner.style.display = "block";
-      banner.textContent = "PulseChat Notice: Replace firebaseConfig inside index.html with your Firebase project keys to activate live backend.";
-    }
+    let currentSidebarTab = 'chats';
 
     try {
       app = initializeApp(firebaseConfig);
@@ -1192,7 +1257,7 @@
       console.error("Initialization error:", e);
     }
 
-    /* KEYBOARD RESIZING FOR MOBILE & WEBVIEW */
+    /* KEYBOARD RESIZING */
     function adjustViewportForKeyboard() {
       if (window.visualViewport) {
         document.body.style.height = `${window.visualViewport.height}px`;
@@ -1226,7 +1291,7 @@
     window.copyMyUsernameHandle = function() {
       const handle = currentUserProfile?.username ? `@${currentUserProfile.username}` : document.getElementById('user-header-handle').textContent;
       navigator.clipboard.writeText(handle).then(() => {
-        showToast(`Copied ${handle} to clipboard! Share it with friends.`);
+        showToast(`Copied ${handle} to clipboard!`);
       }).catch(() => {
         prompt("Copy your handle:", handle);
       });
@@ -1245,6 +1310,16 @@
       }
     }
     applyTheme(localStorage.getItem("pulse_theme") || "system");
+
+    /* SIDEBAR TAB SWITCHER (CHATS VS REQUESTS) */
+    window.switchSidebarTab = function(tab) {
+      currentSidebarTab = tab;
+      const isChats = tab === 'chats';
+      document.getElementById('tab-btn-chats').classList.toggle('active', isChats);
+      document.getElementById('tab-btn-requests').classList.toggle('active', !isChats);
+      document.getElementById('conversation-list').style.display = isChats ? 'block' : 'none';
+      document.getElementById('requests-list').style.display = isChats ? 'none' : 'block';
+    };
 
     /* AUTHENTICATION */
     window.switchAuthTab = function(type) {
@@ -1277,7 +1352,6 @@
       try {
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
-        // onAuthStateChanged handles document creation cleanly without race conditions
       } catch (err) {
         displayAuthError(err.message);
       }
@@ -1307,12 +1381,6 @@
       }
 
       try {
-        // Check username uniqueness
-        const existingCheck = await getDocs(query(collection(db, "users"), where("username", "==", username), limit(1)));
-        if (!existingCheck.empty) {
-          return displayAuthError(`@${username} is already taken. Please choose another.`);
-        }
-
         const userCred = await createUserWithEmailAndPassword(auth, email, pass);
         const uid = userCred.user.uid;
 
@@ -1326,7 +1394,7 @@
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
           isActive: true
-        });
+        }, { merge: true });
 
         await updateProfile(userCred.user, { displayName });
       } catch (err) {
@@ -1336,7 +1404,9 @@
 
     window.handleUserLogout = async function() {
       if (currentUser && rtdb) {
-        await set(ref(rtdb, `status/${currentUser.uid}`), { state: 'offline', last_changed: rtdbServerTimestamp() });
+        try {
+          await set(ref(rtdb, `status/${currentUser.uid}`), { state: 'offline', last_changed: rtdbServerTimestamp() });
+        } catch (e) {}
       }
       if (unsubscribeChatListener) unsubscribeChatListener();
       if (unsubscribeMessagesListener) unsubscribeMessagesListener();
@@ -1344,7 +1414,7 @@
       await signOut(auth);
     };
 
-    /* AUTH STATE & FOOLPROOF USER INITIALIZATION */
+    /* AUTH STATE MONITOR */
     if (auth) {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -1358,51 +1428,52 @@
           currentUserProfile = null;
           document.getElementById('auth-screen-overlay').style.display = 'flex';
           document.getElementById('conversation-list').innerHTML = '';
+          document.getElementById('requests-list').innerHTML = '';
           resetActiveChatView();
         }
       });
     }
 
-    /**
-     * Guarantees that every user (especially Google Sign-In) has a valid
-     * Firestore record and unique username on login.
-     */
     async function ensureAndLoadUserData(user) {
-      const userDocRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userDocRef);
+      const emailHandle = (user.email ? user.email.split('@')[0] : 'user')
+        .replace(/[^a-zA-Z0-9_]/g, '_')
+        .toLowerCase();
 
-      if (!snap.exists()) {
-        // Derive clean handle from email or UID
-        const cleanBase = (user.email ? user.email.split('@')[0] : 'user')
-          .replace(/[^a-zA-Z0-9_]/g, '_')
-          .substring(0, 14)
-          .toLowerCase();
-        const randNum = Math.floor(100 + Math.random() * 900);
-        const autoUsername = `${cleanBase}_${randNum}`;
+      currentUserProfile = {
+        uid: user.uid,
+        displayName: user.displayName || emailHandle,
+        username: emailHandle,
+        email: user.email || "",
+        photoURL: user.photoURL || "",
+        bio: "Hey there! I am using PulseChat."
+      };
+      updateUserUIElements();
 
-        const newProfile = {
-          uid: user.uid,
-          displayName: user.displayName || cleanBase,
-          username: autoUsername,
-          email: user.email || "",
-          photoURL: user.photoURL || "",
-          bio: "Hey there! I am using PulseChat.",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          isActive: true
-        };
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userDocRef);
 
-        await setDoc(userDocRef, newProfile);
-        currentUserProfile = newProfile;
-      } else {
-        currentUserProfile = snap.data();
-        
-        // Repair legacy records missing username
-        if (!currentUserProfile.username) {
-          const fallback = `user_${user.uid.substring(0, 6).toLowerCase()}`;
-          currentUserProfile.username = fallback;
-          await updateDoc(userDocRef, { username: fallback });
+        if (!snap.exists()) {
+          const autoUsername = `${emailHandle.substring(0, 14)}_${Math.floor(100 + Math.random() * 900)}`;
+          currentUserProfile.username = autoUsername;
+
+          await setDoc(userDocRef, {
+            uid: user.uid,
+            displayName: currentUserProfile.displayName,
+            username: autoUsername,
+            email: currentUserProfile.email,
+            photoURL: currentUserProfile.photoURL,
+            bio: currentUserProfile.bio,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            isActive: true
+          }, { merge: true });
+        } else {
+          const data = snap.data();
+          currentUserProfile = { ...currentUserProfile, ...data };
         }
+      } catch (err) {
+        console.warn("Firestore access error on login:", err);
       }
 
       updateUserUIElements();
@@ -1426,34 +1497,37 @@
       }
     }
 
-    /* REALTIME PRESENCE */
     function setupRealtimePresence() {
       if (!rtdb || !currentUser) return;
-      const statusRef = ref(rtdb, `/status/${currentUser.uid}`);
-      const connectedRef = ref(rtdb, '.info/connected');
+      try {
+        const statusRef = ref(rtdb, `/status/${currentUser.uid}`);
+        const connectedRef = ref(rtdb, '.info/connected');
 
-      onValue(connectedRef, (snap) => {
-        if (snap.val() === false) return;
-        onDisconnect(statusRef).set({ state: 'offline', last_changed: rtdbServerTimestamp() })
-          .then(() => {
-            set(statusRef, { state: 'online', last_changed: rtdbServerTimestamp() });
-          });
-      });
+        onValue(connectedRef, (snap) => {
+          if (snap.val() === false) return;
+          onDisconnect(statusRef).set({ state: 'offline', last_changed: rtdbServerTimestamp() })
+            .then(() => {
+              set(statusRef, { state: 'online', last_changed: rtdbServerTimestamp() });
+            });
+        });
+      } catch (e) {
+        console.warn("RTDB presence warning:", e);
+      }
     }
 
     function setTypingStatus(chatId, isTyping) {
       if (!rtdb || !currentUser || !chatId) return;
-      const typingRef = ref(rtdb, `/typing/${chatId}/${currentUser.uid}`);
-      if (isTyping) {
-        set(typingRef, { displayName: currentUserProfile?.displayName || "Someone", typing: true });
-      } else {
-        set(typingRef, null);
-      }
+      try {
+        const typingRef = ref(rtdb, `/typing/${chatId}/${currentUser.uid}`);
+        if (isTyping) {
+          set(typingRef, { displayName: currentUserProfile?.displayName || "Someone", typing: true });
+        } else {
+          set(typingRef, null);
+        }
+      } catch (e) {}
     }
 
-    /* PROFILE & USERNAME EDITING */
     window.openProfileModal = function() {
-      // Fallback object so modal always opens even if sync is pending
       const p = currentUserProfile || {
         displayName: currentUser?.displayName || "User",
         username: "user",
@@ -1507,28 +1581,19 @@
       saveBtn.textContent = "Saving...";
 
       try {
-        const currentUsername = currentUserProfile?.username || "";
+        if (!currentUser) throw new Error("You must be logged in.");
 
-        // Verify uniqueness if username changed
-        if (newUsername !== currentUsername) {
-          const userCheck = await getDocs(query(collection(db, "users"), where("username", "==", newUsername), limit(1)));
-          if (!userCheck.empty && userCheck.docs[0].id !== currentUser.uid) {
-            saveBtn.disabled = false;
-            saveBtn.textContent = "Save Changes";
-            return alert(`@${newUsername} is already taken! Please choose another.`);
-          }
-        }
-
-        // Direct, atomic update on the user's document
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          displayName,
+        const userDocRef = doc(db, "users", currentUser.uid);
+        await setDoc(userDocRef, {
+          uid: currentUser.uid,
+          displayName: displayName,
           username: newUsername,
-          bio,
-          photoURL,
+          bio: bio,
+          photoURL: photoURL,
+          email: currentUser.email || "",
           updatedAt: serverTimestamp()
-        });
+        }, { merge: true });
 
-        // Update local state
         currentUserProfile.displayName = displayName;
         currentUserProfile.username = newUsername;
         currentUserProfile.bio = bio;
@@ -1545,7 +1610,7 @@
       }
     };
 
-    /* USER DISCOVERY & SEARCH */
+    /* USER DISCOVERY & CHAT REQUEST CREATION */
     document.getElementById('btn-discover-users').addEventListener('click', async () => {
       openModal('modal-user-search');
       document.getElementById('user-discovery-query').value = '';
@@ -1567,7 +1632,7 @@
         });
         renderUserSearchResults(cachedRegisteredUsers);
       } catch (err) {
-        container.innerHTML = `<div style="padding:14px; color:var(--danger); text-align:center;">Error loading users: ${escapeHTML(err.message)}</div>`;
+        container.innerHTML = `<div style="padding:14px; color:var(--danger); text-align:center;">Unable to load contacts.</div>`;
       }
     }
 
@@ -1589,7 +1654,7 @@
       container.innerHTML = '';
 
       if (list.length === 0) {
-        container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted);">No users found. Share your handle with friends to chat!</div>';
+        container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted);">No other users found.</div>';
         return;
       }
 
@@ -1603,52 +1668,68 @@
             <div class="chat-name">${escapeHTML(user.displayName || 'Pulse User')}</div>
             <div class="chat-last-message" style="color:var(--primary); font-size:12px; font-weight:600;">@${escapeHTML(user.username || 'unknown')}</div>
           </div>
-          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Chat</button>
+          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Chat / Request</button>
         `;
         item.querySelector('button').addEventListener('click', () => {
           closeModal('modal-user-search');
-          openOrCreatePrivateConversation(user);
+          initiateChatOrRequest(user);
         });
         container.appendChild(item);
       });
     }
 
-    async function openOrCreatePrivateConversation(targetUser) {
+    /**
+     * Solves the chat opening issue and initiates chat requests cleanly
+     */
+    async function initiateChatOrRequest(targetUser) {
       const chatId = [currentUser.uid, targetUser.uid].sort().join('_');
       const chatDocRef = doc(db, "chats", chatId);
-      const chatSnap = await getDoc(chatDocRef);
 
-      if (!chatSnap.exists()) {
-        await setDoc(chatDocRef, {
-          chatId: chatId,
-          type: "private",
-          participants: [currentUser.uid, targetUser.uid],
-          participantDetails: {
-            [currentUser.uid]: {
-              displayName: currentUserProfile.displayName || "User",
-              username: currentUserProfile.username || "",
-              photoURL: currentUserProfile.photoURL || ""
+      try {
+        const chatSnap = await getDoc(chatDocRef);
+
+        if (!chatSnap.exists()) {
+          // Create chat with "pending" request status
+          await setDoc(chatDocRef, {
+            chatId: chatId,
+            type: "private",
+            status: "pending", // "pending" | "accepted"
+            requestedBy: currentUser.uid,
+            requestedTo: targetUser.uid,
+            participants: [currentUser.uid, targetUser.uid],
+            participantDetails: {
+              [currentUser.uid]: {
+                displayName: currentUserProfile.displayName || "User",
+                username: currentUserProfile.username || "",
+                photoURL: currentUserProfile.photoURL || ""
+              },
+              [targetUser.uid]: {
+                displayName: targetUser.displayName || targetUser.username,
+                username: targetUser.username || "",
+                photoURL: targetUser.photoURL || ""
+              }
             },
-            [targetUser.uid]: {
-              displayName: targetUser.displayName || targetUser.username,
-              username: targetUser.username || "",
-              photoURL: targetUser.photoURL || ""
-            }
-          },
-          lastMessage: "Chat created",
-          lastMessageTime: serverTimestamp(),
-          unreadCounts: {
-            [currentUser.uid]: 0,
-            [targetUser.uid]: 0
-          },
-          createdAt: serverTimestamp()
-        });
-      }
+            lastMessage: "Chat request pending",
+            lastMessageTime: serverTimestamp(),
+            unreadCounts: {
+              [currentUser.uid]: 0,
+              [targetUser.uid]: 1
+            },
+            createdAt: serverTimestamp()
+          }, { merge: true });
 
-      openConversation(chatId);
+          showToast(`Chat request sent to @${targetUser.username || 'user'}!`);
+        }
+
+        // Open chat view immediately without glitching back to home
+        openConversation(chatId);
+      } catch (err) {
+        console.error("Error opening chat:", err);
+        showToast("Error opening conversation: " + err.message);
+      }
     }
 
-    /* CONVERSATION LIST LISTENER */
+    /* CONVERSATION & REQUEST REALTIME SYNC */
     function listenToConversations() {
       if (unsubscribeChatListener) unsubscribeChatListener();
 
@@ -1660,11 +1741,17 @@
       );
 
       unsubscribeChatListener = onSnapshot(chatsQuery, (snapshot) => {
-        const listEl = document.getElementById('conversation-list');
-        listEl.innerHTML = '';
+        const convListEl = document.getElementById('conversation-list');
+        const reqListEl = document.getElementById('requests-list');
+        const badgeEl = document.getElementById('sidebar-request-badge');
+        
+        convListEl.innerHTML = '';
+        reqListEl.innerHTML = '';
+
+        let pendingCount = 0;
 
         if (snapshot.empty) {
-          listEl.innerHTML = `
+          convListEl.innerHTML = `
             <div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:13.5px;">
               No conversations yet.<br><br>
               <button class="btn btn-secondary" onclick="document.getElementById('btn-discover-users').click()">
@@ -1672,6 +1759,7 @@
               </button>
             </div>
           `;
+          badgeEl.style.display = 'none';
           return;
         }
 
@@ -1679,6 +1767,14 @@
           const chat = docSnap.data();
           const chatId = docSnap.id;
           const isGroup = chat.type === 'group';
+
+          // Differentiate active chats from pending requests
+          const isPending = chat.status === 'pending';
+          const isRequestedToMe = isPending && chat.requestedTo === currentUser.uid;
+
+          if (isRequestedToMe) {
+            pendingCount++;
+          }
 
           let chatTitle = chat.groupName || "Chat";
           let chatImage = chat.groupImageURL || "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238696a0'><circle cx='12' cy='12' r='10'/></svg>";
@@ -1696,47 +1792,89 @@
           const unread = chat.unreadCounts?.[currentUser.uid] || 0;
           const dateStr = chat.lastMessageTime?.toDate ? formatMessageDate(chat.lastMessageTime.toDate()) : '';
 
-          const item = document.createElement('div');
-          item.className = `chat-item ${activeChatId === chatId ? 'active' : ''}`;
-          item.id = `chat-item-${chatId}`;
-          item.innerHTML = `
-            <div class="avatar-wrapper">
+          if (isPending) {
+            // Render inside Requests Tab
+            const reqItem = document.createElement('div');
+            reqItem.className = 'chat-item';
+            reqItem.innerHTML = `
               <img class="avatar" src="${chatImage}" />
-              ${!isGroup && otherUserId ? `<div class="online-badge" id="online-badge-${otherUserId}"></div>` : ''}
-            </div>
-            <div class="chat-details">
-              <div class="chat-row-top">
-                <span class="chat-name">${escapeHTML(chatTitle)}</span>
-                <span class="chat-time">${dateStr}</span>
+              <div class="chat-details">
+                <div class="chat-row-top">
+                  <span class="chat-name">${escapeHTML(chatTitle)}</span>
+                  <span class="chat-time">${dateStr}</span>
+                </div>
+                <div class="chat-row-bottom">
+                  <span class="chat-last-message" style="color:var(--primary);">
+                    ${isRequestedToMe ? 'Sent you a chat request' : 'Request sent (waiting acceptance)'}
+                  </span>
+                </div>
               </div>
-              <div class="chat-row-bottom">
-                <span class="chat-last-message">${escapeHTML(chat.lastMessage || '')}</span>
-                ${unread > 0 ? `<span class="unread-counter">${unread}</span>` : ''}
+              ${isRequestedToMe ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); acceptChatRequest('${chatId}')">Accept</button>
+                  <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); declineChatRequest('${chatId}')">Decline</button>
+                </div>
+              ` : ''}
+            `;
+            reqItem.addEventListener('click', () => openConversation(chatId));
+            reqListEl.appendChild(reqItem);
+          } else {
+            // Render inside Active Chats Tab
+            const item = document.createElement('div');
+            item.className = `chat-item ${activeChatId === chatId ? 'active' : ''}`;
+            item.id = `chat-item-${chatId}`;
+            item.innerHTML = `
+              <div class="avatar-wrapper">
+                <img class="avatar" src="${chatImage}" />
+                ${!isGroup && otherUserId ? `<div class="online-badge" id="online-badge-${otherUserId}"></div>` : ''}
               </div>
-            </div>
-          `;
+              <div class="chat-details">
+                <div class="chat-row-top">
+                  <span class="chat-name">${escapeHTML(chatTitle)}</span>
+                  <span class="chat-time">${dateStr}</span>
+                </div>
+                <div class="chat-row-bottom">
+                  <span class="chat-last-message">${escapeHTML(chat.lastMessage || '')}</span>
+                  ${unread > 0 ? `<span class="unread-counter">${unread}</span>` : ''}
+                </div>
+              </div>
+            `;
+            item.addEventListener('click', () => openConversation(chatId));
+            convListEl.appendChild(item);
 
-          item.addEventListener('click', () => openConversation(chatId));
-          listEl.appendChild(item);
-
-          if (!isGroup && otherUserId && rtdb) {
-            onValue(ref(rtdb, `/status/${otherUserId}`), (statusSnap) => {
-              const val = statusSnap.val();
-              const badge = document.getElementById(`online-badge-${otherUserId}`);
-              if (badge) badge.classList.toggle('visible', val?.state === 'online');
-            });
+            if (!isGroup && otherUserId && rtdb) {
+              try {
+                onValue(ref(rtdb, `/status/${otherUserId}`), (statusSnap) => {
+                  const val = statusSnap.val();
+                  const badge = document.getElementById(`online-badge-${otherUserId}`);
+                  if (badge) badge.classList.toggle('visible', val?.state === 'online');
+                });
+              } catch (e) {}
+            }
           }
         });
-      }, (err) => console.error("Conversations error:", err));
+
+        // Update badge counter
+        if (pendingCount > 0) {
+          badgeEl.textContent = pendingCount;
+          badgeEl.style.display = 'inline-block';
+        } else {
+          badgeEl.style.display = 'none';
+          if (reqListEl.children.length === 0) {
+            reqListEl.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted); font-size:13px;">No pending chat requests.</div>';
+          }
+        }
+      }, (err) => console.error("Conversations listener:", err));
     }
 
-    /* MESSAGING PIPELINE */
+    /* CHAT OPENING & REQUEST GATEWAY */
     window.openConversation = async function(chatId) {
       activeChatId = chatId;
       document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
       const activeEl = document.getElementById(`chat-item-${chatId}`);
       if (activeEl) activeEl.classList.add('active');
 
+      // Transition mobile view seamlessly
       document.getElementById('sidebar').classList.add('hidden-mobile');
       document.getElementById('chat-empty-state').style.display = 'none';
       const container = document.getElementById('active-chat-container');
@@ -1759,18 +1897,20 @@
         if (otherInfo?.photoURL) avatar = otherInfo.photoURL;
 
         if (rtdb) {
-          onValue(ref(rtdb, `/status/${otherId}`), (s) => {
-            const val = s.val();
-            const subEl = document.getElementById('active-chat-subtitle');
-            const badgeEl = document.getElementById('active-chat-online-badge');
-            if (val?.state === 'online') {
-              subEl.textContent = "online";
-              badgeEl.classList.add('visible');
-            } else {
-              subEl.textContent = val?.last_changed ? `last seen ${formatMessageDate(new Date(val.last_changed))}` : 'offline';
-              badgeEl.classList.remove('visible');
-            }
-          });
+          try {
+            onValue(ref(rtdb, `/status/${otherId}`), (s) => {
+              const val = s.val();
+              const subEl = document.getElementById('active-chat-subtitle');
+              const badgeEl = document.getElementById('active-chat-online-badge');
+              if (val?.state === 'online') {
+                subEl.textContent = "online";
+                badgeEl.classList.add('visible');
+              } else {
+                subEl.textContent = val?.last_changed ? `last seen ${formatMessageDate(new Date(val.last_changed))}` : 'offline';
+                badgeEl.classList.remove('visible');
+              }
+            });
+          } catch (e) {}
         }
       } else {
         subtitle = `${activeChatMeta.participants.length} members`;
@@ -1781,13 +1921,89 @@
       document.getElementById('active-chat-subtitle').textContent = subtitle;
       document.getElementById('active-chat-avatar').src = avatar;
 
-      await updateDoc(doc(db, "chats", chatId), {
-        [`unreadCounts.${currentUser.uid}`]: 0
-      });
+      // Handle Request State Bar & Message Composer Gate
+      handleChatRequestGate();
+
+      await setDoc(doc(db, "chats", chatId), {
+        unreadCounts: { [currentUser.uid]: 0 }
+      }, { merge: true });
 
       listenToMessages(chatId);
       listenToTyping(chatId);
     };
+
+    function handleChatRequestGate() {
+      const banner = document.getElementById('request-banner-bar');
+      const bannerText = document.getElementById('request-banner-text');
+      const bannerActions = document.getElementById('request-banner-actions');
+      const inputEl = document.getElementById('message-text-input');
+      const sendBtn = document.getElementById('btn-send-message');
+
+      if (activeChatMeta.status === 'pending') {
+        banner.style.display = 'flex';
+
+        if (activeChatMeta.requestedTo === currentUser.uid) {
+          // Current user is recipient
+          bannerText.textContent = "This user sent you a chat request. Accept to reply.";
+          bannerActions.style.display = 'flex';
+          inputEl.contentEditable = "false";
+          inputEl.setAttribute("placeholder", "Accept chat request to reply...");
+          sendBtn.disabled = true;
+        } else {
+          // Current user is sender
+          bannerText.textContent = "Chat request sent. Waiting for recipient to accept.";
+          bannerActions.style.display = 'none';
+          inputEl.contentEditable = "false";
+          inputEl.setAttribute("placeholder", "Waiting for request to be accepted...");
+          sendBtn.disabled = true;
+        }
+      } else {
+        // Chat is accepted
+        banner.style.display = 'none';
+        inputEl.contentEditable = "true";
+        inputEl.setAttribute("placeholder", "Type a message");
+        sendBtn.disabled = false;
+      }
+    }
+
+    window.acceptChatRequest = async function(chatId) {
+      const targetId = chatId || activeChatId;
+      if (!targetId) return;
+
+      try {
+        await setDoc(doc(db, "chats", targetId), {
+          status: "accepted",
+          lastMessage: "Chat request accepted",
+          lastMessageTime: serverTimestamp()
+        }, { merge: true });
+
+        showToast("Chat request accepted!");
+        if (activeChatId === targetId) {
+          activeChatMeta.status = "accepted";
+          handleChatRequestGate();
+        }
+      } catch (err) {
+        alert("Failed to accept: " + err.message);
+      }
+    };
+
+    window.declineChatRequest = async function(chatId) {
+      const targetId = chatId || activeChatId;
+      if (!targetId || !confirm("Are you sure you want to decline this chat request?")) return;
+
+      try {
+        await deleteDoc(doc(db, "chats", targetId));
+        showToast("Request declined.");
+        if (activeChatId === targetId) {
+          resetActiveChatView();
+        }
+      } catch (err) {
+        alert("Failed to decline: " + err.message);
+      }
+    };
+
+    window.acceptCurrentChatRequest = () => acceptChatRequest(activeChatId);
+    window.declineCurrentChatRequest = () => declineChatRequest(activeChatId);
 
     function listenToMessages(chatId) {
       if (unsubscribeMessagesListener) unsubscribeMessagesListener();
@@ -1822,7 +2038,7 @@
           bubble.className = `message-bubble ${isOwn ? 'out' : 'in'}`;
 
           let innerHTML = '';
-          if (!isOwn && activeChatMeta.type === 'group') {
+          if (!isOwn && activeChatMeta?.type === 'group') {
             innerHTML += `<div class="sender-name-label">${escapeHTML(msg.senderName || 'Member')}</div>`;
           }
 
@@ -1872,10 +2088,10 @@
           stream.appendChild(bubble);
 
           if (!isOwn && (!msg.readBy || !msg.readBy[currentUser.uid])) {
-            updateDoc(doc(db, "chats", chatId, "messages", msgId), {
-              [`readBy.${currentUser.uid}`]: serverTimestamp(),
-              [`deliveredTo.${currentUser.uid}`]: serverTimestamp()
-            });
+            setDoc(doc(db, "chats", chatId, "messages", msgId), {
+              readBy: { [currentUser.uid]: serverTimestamp() },
+              deliveredTo: { [currentUser.uid]: serverTimestamp() }
+            }, { merge: true });
           }
         });
 
@@ -1886,7 +2102,7 @@
     async function submitTextMessage() {
       const inputEl = document.getElementById('message-text-input');
       const text = inputEl.innerText.trim();
-      if (!text || !activeChatId) return;
+      if (!text || !activeChatId || activeChatMeta?.status === 'pending') return;
 
       inputEl.innerText = "";
       setTypingStatus(activeChatId, false);
@@ -1920,9 +2136,9 @@
           }
         });
 
-        await updateDoc(doc(db, "chats", activeChatId), updatePayload);
+        await setDoc(doc(db, "chats", activeChatId), updatePayload, { merge: true });
       } catch (err) {
-        showToast("Error sending: " + err.message);
+        showToast("Error sending message: " + err.message);
       }
     }
 
@@ -1933,7 +2149,7 @@
         e.preventDefault();
         submitTextMessage();
       } else {
-        if (activeChatId) {
+        if (activeChatId && activeChatMeta?.status !== 'pending') {
           setTypingStatus(activeChatId, true);
           clearTimeout(typingDebounceTimer);
           typingDebounceTimer = setTimeout(() => {
@@ -1945,21 +2161,23 @@
 
     function listenToTyping(chatId) {
       if (!rtdb) return;
-      onValue(ref(rtdb, `/typing/${chatId}`), (snap) => {
-        const val = snap.val();
-        if (!val) return;
-        const typingUsers = Object.keys(val).filter(uid => uid !== currentUser.uid && val[uid]?.typing);
-        const subEl = document.getElementById('active-chat-subtitle');
-        if (typingUsers.length > 0) {
-          subEl.textContent = "typing...";
-          subEl.style.color = "var(--primary)";
-        } else {
-          subEl.style.color = "var(--text-secondary)";
-          if (activeChatMeta.type === 'group') {
-            subEl.textContent = `${activeChatMeta.participants.length} members`;
+      try {
+        onValue(ref(rtdb, `/typing/${chatId}`), (snap) => {
+          const val = snap.val();
+          if (!val) return;
+          const typingUsers = Object.keys(val).filter(uid => uid !== currentUser.uid && val[uid]?.typing);
+          const subEl = document.getElementById('active-chat-subtitle');
+          if (typingUsers.length > 0) {
+            subEl.textContent = "typing...";
+            subEl.style.color = "var(--primary)";
+          } else {
+            subEl.style.color = "var(--text-secondary)";
+            if (activeChatMeta?.type === 'group') {
+              subEl.textContent = `${activeChatMeta.participants.length} members`;
+            }
           }
-        }
-      });
+        });
+      } catch (e) {}
     }
 
     window.startReplyToMessage = function(id, senderName, text) {
@@ -1976,7 +2194,7 @@
     };
     document.getElementById('btn-cancel-reply').addEventListener('click', cancelReply);
 
-    /* GROUP CONVERSATIONS */
+    /* GROUP CHAT */
     document.getElementById('btn-create-group').addEventListener('click', async () => {
       const picker = document.getElementById('group-members-picker');
       picker.innerHTML = 'Loading contacts...';
@@ -2030,6 +2248,7 @@
       try {
         const groupRef = await addDoc(collection(db, "chats"), {
           type: "group",
+          status: "accepted",
           groupName: name,
           groupDescription: desc,
           groupImageURL: groupImg || "",
@@ -2050,8 +2269,11 @@
       }
     };
 
-    /* IN-CHAT IMAGE SHARING VIA HTTPS URL */
+    /* IN-CHAT MEDIA (HTTPS URL ONLY) */
     document.getElementById('btn-open-image-sender').addEventListener('click', () => {
+      if (activeChatMeta?.status === 'pending') {
+        return alert("Please accept the chat request first.");
+      }
       document.getElementById('image-share-url').value = '';
       document.getElementById('image-share-caption').value = '';
       document.getElementById('image-preview-target').innerHTML = '<span style="font-size:12px;color:var(--text-muted);">Enter an HTTPS image URL to preview</span>';
@@ -2084,10 +2306,10 @@
       };
 
       await addDoc(collection(db, "chats", activeChatId, "messages"), payload);
-      await updateDoc(doc(db, "chats", activeChatId), {
+      await setDoc(doc(db, "chats", activeChatId), {
         lastMessage: caption ? `📷 ${caption}` : "📷 Shared an image",
         lastMessageTime: serverTimestamp()
-      });
+      }, { merge: true });
     };
 
     /* VIEW CONTROLS */
