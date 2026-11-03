@@ -1,0 +1,10 @@
+{
+  "name": "pulsechat-functions",
+  "version": "1.0.0",
+  "description": "Serverless backend routines for PulseChat",
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0"
+  }
+}
